@@ -1,0 +1,31 @@
+import example.*
+import cambios.*
+
+const alf = new Usuario(rol = comun)
+
+const rasta = new Usuario(rol = admin)
+
+const pepita = new Usuario(rol = bot)
+
+test "aplicar un commit a una carpeta surte efecto sobre ella" {
+	// Acá creo los objetos que necesito
+	const carpeta = new Carpeta(nombre = "pdep")
+	const commit = new Commit(autor = alf, descripcion = "Commit inicial", cambios = [ 
+		new Crear(nombreDelArchivo = "leeme.md"), 
+		new Crear(nombreDelArchivo = "parcial.wlk"), 
+		new Agregar(nombreDelArchivo = "parcial.wlk", contenidoAAgregar =  "Este es un parcial")
+	])
+	// Acá está la magia
+	commit.aplicarEn(carpeta)
+	// Acá valido que todo salió bien
+	assert.that(carpeta.contiene("leeme.md"))
+	assert.that(carpeta.contiene("parcial.wlk"))
+	assert.equals("Este es un parcial", carpeta.encontrarArchivo("parcial.wlk").contenido())
+}
+
+test "Validar permisos de una branch" {
+	const branchDeAlf = new Branch(colaboradores = [ alf ])
+	assert.that(alf.puedeCommitearEn(branchDeAlf))
+	assert.that(rasta.puedeCommitearEn(branchDeAlf))
+	assert.notThat(pepita.puedeCommitearEn(branchDeAlf))
+}
